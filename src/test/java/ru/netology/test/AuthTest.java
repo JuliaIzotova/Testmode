@@ -1,6 +1,7 @@
 package ru.netology.test;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.conditions.Text;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.time.Duration;
 
 
+import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.*;
 import static ru.netology.testmode.data.DataGenerator.Registration.getRegisteredUser;
 import static ru.netology.testmode.data.DataGenerator.Registration.getUser;
@@ -28,9 +31,14 @@ class AuthTest {
 
         $("[data-test-id=login] input").setValue(registeredUser.getLogin());
         $("[data-test-id=password] input").setValue(registeredUser.getPassword());
-        $("[data-test-id=action-login]").click();
-        $("[id=root]").shouldBe(Condition.visible, Duration.ofSeconds(15));
+        $(".button").click();
+        $("[id=root]").should(text("Личный кабинет"));
     }
+    // попытка для себя написать на xpath
+//        $x("//span[@data-test-id='login']//child::input").setValue(registeredUser.getLogin());
+//        $x("//span[@data-test-id='password']//child::input").setValue(registeredUser.getPassword());
+//        $x("//button").click();
+//        $x("//h2").should(text("Личный кабинет"));
 
     @Test
     @DisplayName("Should get error message if login with not registered user")
@@ -39,7 +47,7 @@ class AuthTest {
         $("[data-test-id=login] input").setValue(notRegisteredUser.getLogin());
         $("[data-test-id=password] input").setValue(notRegisteredUser.getPassword());
         $("[data-test-id=action-login]").click();
-        $("[data-test-id=error-notification]").should(Condition.visible, Duration.ofSeconds(15));
+        $(".notification__content").should(exactText("Ошибка! Неверно указан логин или пароль"));
     }
 
     @Test
@@ -50,7 +58,7 @@ class AuthTest {
         $("[data-test-id=login] input").setValue(blockedUser.getLogin());
         $("[data-test-id=password] input").setValue(blockedUser.getPassword());
         $("[data-test-id=action-login]").click();
-        $("[data-test-id=error-notification]").should(Condition.visible, Duration.ofSeconds(15));
+        $(".notification__content").should(exactText("Ошибка! Пользователь заблокирован"));
     }
 
     @Test
@@ -62,7 +70,7 @@ class AuthTest {
         $("[data-test-id=login] input").setValue(wrongLogin);
         $("[data-test-id=password] input").setValue(registeredUser.getPassword());
         $("[data-test-id=action-login]").click();
-        $("[data-test-id=error-notification]").should(Condition.visible, Duration.ofSeconds(15));
+        $(".notification__content").should(exactText("Ошибка! Неверно указан логин или пароль"));
     }
 
     @Test
@@ -74,7 +82,8 @@ class AuthTest {
         $("[data-test-id=login] input").setValue(registeredUser.getLogin());
         $("[data-test-id=password] input").setValue(wrongPassword);
         $("[data-test-id=action-login]").click();
-        $("[data-test-id=error-notification]").should(Condition.visible, Duration.ofSeconds(15));
+        $(".notification__content").should(exactText("Ошибка! Неверно указан логин или пароль"));
 
     }
+
 }
